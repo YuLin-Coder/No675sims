@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>工资信息管理系统</title>
+		<link rel="stylesheet" type="text/css" href="js/layui/css/layui.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<script src="js/jquery-2.0.0.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/isLoginAdmin.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<style type="text/css">
+		body {
+			padding: 50px 50px;
+		}
+
+		.content {
+			width: 400px;
+		}
+
+		.layui-btn {
+			width: 290px;
+			float: right;
+			margin-top: 10px;
+		}
+
+		.search {
+			display: flex;
+			align-items: center;
+		}
+
+		#search {
+			width: 200px;
+		}
+
+		#start-search {
+			margin: 0;
+			margin-left: 10px;
+			width: 70px;
+		}
+
+		.header th {
+			font-size: 15px;
+			font-weight: bold;
+		}
+
+		#more {
+			text-align: center;
+			font-size: 12px;
+			background-color: white;
+			border-top: 1px solid #E6E6E6;
+		}
+
+		.control {
+			width: 80px;
+		}
+
+		.control i {
+			background-color: #009E94;
+			color: white;
+			font-size: 15px;
+			border-radius: 50%;
+			cursor: pointer;
+			transition: 0.3s all;
+			margin-left: 10px;
+			display: inline-block;
+			width: 25px;
+			height: 25px;
+			text-align: center;
+			line-height: 25px;
+		}
+
+		.control i:hover {
+			transform: scale(1.2);
+			transition: 0.3s all;
+		}
+
+		#edit-all{
+			background-color: rgba(0,0,0,0.1);
+			width: 100vw;
+			height: 100vh;
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 999;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			display: none;
+		}
+		#edit-all-board{
+			padding: 20px;
+			width: 400px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+			background-color: white;
+		}
+		.layui-upload-img {
+			width: 100px;
+			height: 100px;
+			display: block;
+			border-radius: 50%;
+			border: 1px solid rgba(0, 0, 0, 0.2);
+		}
+
+		#picture {
+			cursor: pointer;
+		}
+
+		.layui-form-pane {
+			width: 100%;
+		}
+
+		.layui-elem-quote {
+			height: 10px;
+			line-height: 10px;
+			width: 100%;
+		}
+		.edit-control{
+			display: flex;
+		}
+		.edit-control button{
+			flex: 1;
+			margin: 10px !important;
+		}
+	</style>
+	<body>
+		<div class="search">
+			<input id="search" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入要搜索的内容" class="layui-input">
+			<button id="start-search" type="button" class="layui-btn">搜索</button>
+		</div>
+		<table class="layui-table" style="margin-top: 30px;" lay-even="" lay-skin="row">
+			<colgroup>
+				<col width="150">
+				<col width="150">
+				<col width="200">
+				<col>
+			</colgroup>
+			<thead>
+				<tr class="header">
+					<th>员工编号</th>
+					<th>登录密码</th>
+					<th>员工姓名</th>
+					<th>所属部门</th>
+					<th>员工职称</th>
+					<th>入职日期</th>
+					<th>手机号码</th>
+					<th>性别</th>
+					<th style="text-align: center;">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+				<tr id="more">
+					<td colspan="9">加载更多...</td>
+				</tr>
+			</tbody>
+			<div id="edit-all">
+				<div id="edit-all-board">
+<!-- 					<input type="file" id="picture-input" style="display: none;" /> -->
+<!-- 					<img class="layui-upload-img" src="" id="picture" alt="" title="点击选择图片" style="background-size: cover;"> -->
+					<div class="layui-form-pane layui-form">
+						<div class="layui-form-item" style="margin-top: 20px;">
+							<label class="layui-form-label">员工编号</label>
+							<div class="layui-input-block">
+								<input id="id" type="text" name="title" autocomplete="off" placeholder="请输入内容" readonly="readonly" style="background-color: rgba(0,0,0,0.05);" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item" style="margin-top: 20px;">
+							<label class="layui-form-label">登录密码</label>
+							<div class="layui-input-block">
+								<input id="password" type="text" name="title" autocomplete="off" placeholder="请输入内容" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item" style="margin-top: 20px;">
+							<label class="layui-form-label">员工姓名</label>
+							<div class="layui-input-block">
+								<input id="name" type="text" name="title" autocomplete="off" placeholder="请输入内容" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">所属部门</label>
+							<div class="layui-input-block">
+								<select id="sector" name="interest" lay-filter="aihao">
+									
+								</select>
+							</div>
+						</div>
+						<div class="layui-form-item" style="margin-top: 20px;">
+							<label class="layui-form-label">员工职称</label>
+							<div class="layui-input-block">
+								<input id="named" type="text" name="title" autocomplete="off" placeholder="请输入内容" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item" style="margin-top: 20px;">
+							<div class="layui-inline">
+								<label class="layui-form-label">入职日期</label>
+								<div class="layui-input-inline">
+									<input id="time" type="text" class="layui-input" placeholder="yyyy-MM-dd HH:mm:ss">
+								</div>
+							</div>
+						</div>
+						<div class="layui-form-item" style="margin-top: 20px;">
+							<label class="layui-form-label">手机号码</label>
+							<div class="layui-input-block">
+								<input id="phone" type="text" name="title" autocomplete="off" placeholder="请输入内容" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item" pane="">
+							<label class="layui-form-label">性别</label>
+							<div id="sex" class="layui-input-block">
+								<input type="radio" name="sex" value="男" title="男" checked="">
+								<input type="radio" name="sex" value="女" title="女">
+							</div>
+						</div>
+						<div class="edit-control">
+							<button id="ok" type="button" class="layui-btn" style="width: 100%;margin-top: 20px;">修改</button>
+							<button id="no" type="button" class="layui-btn" style="width: 100%;margin-top: 5px;" onclick="$('#edit-all').fadeOut(300)">取消</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</table>
+		<script type="text/javascript">
+			var form;
+			layui.use(['form', 'layer', 'laydate', 'element'], function() {
+				var laydate = layui.laydate;
+				form = layui.form;
+				//日期时间选择器
+				laydate.render({
+					elem: '#time',
+					type: 'datetime'
+				});
+				
+				// 搜索
+				$("#start-search").click(function(){
+					if($("#search").val() == ""){
+						layer.msg("请输入搜素内容");
+					}else{
+						$.ajax({
+							url: "getSearchUser",
+							type: 'POST',
+							data: {
+								search: $("#search").val(),
+								start: 0,
+								count: 9999,
+							},
+							success: function(result) {
+								$(".l").remove();
+								var data = "";
+								for(var i = 0;i < result.length;i++){
+									data += '<tr class="l">'
+										+'<td>'+result[i].user_id+'</td>'
+										+'<td>'+result[i].user_password+'</td>'
+										+'<td>'+result[i].user_name+'</td>'
+										+'<td>'+result[i].user_sector+'</td>'
+										+'<td>'+result[i].user_named+'</td>'
+										+'<td>'+result[i].user_time+'</td>'
+										+'<td>'+result[i].user_phone+'</td>'
+										+'<td>'+result[i].user_sex+'</td>'
+										+'<td class="control">'
+											+'<i class="layui-icon edit" onclick="editInf(\''+result[i].user_id+'\')" title="编辑">&#xe63c;</i>'
+											+'<i class="layui-icon delete" onclick="deleteInf(\''+result[i].user_id+'\')" style="background-color: #EB7350;" title="删除">&#xe640;</i>'
+										+'</td>'
+									+'</tr>';
+								}
+								$("#more").before(data);
+							},
+							error: function(e) {
+								console.log(e.status);
+								layer.msg('搜索失败');
+							}
+						});
+					}
+				});
+				
+				$.ajax({
+					url: "getAllUser",
+					type: 'POST',
+					data: {
+						start: 0,
+						count: 9999,
+					},
+					success: function(result) {
+						var data = "";
+						for(var i = 0;i < result.length;i++){
+							data += '<tr class="l">'
+								+'<td>'+result[i].user_id+'</td>'
+								+'<td>'+result[i].user_password+'</td>'
+								+'<td>'+result[i].user_name+'</td>'
+								+'<td>'+result[i].user_sector+'</td>'
+								+'<td>'+result[i].user_named+'</td>'
+								+'<td>'+result[i].user_time+'</td>'
+								+'<td>'+result[i].user_phone+'</td>'
+								+'<td>'+result[i].user_sex+'</td>'
+								+'<td class="control">'
+									+'<i class="layui-icon edit" onclick="editInf(\''+result[i].user_id+'\')" title="编辑">&#xe63c;</i>'
+									+'<i class="layui-icon delete" onclick="deleteInf(\''+result[i].user_id+'\')" style="background-color: #EB7350;" title="删除">&#xe640;</i>'
+								+'</td>'
+							+'</tr>';
+						}
+						$("#more").before(data);
+					},
+					error: function(e) {
+						console.log(e.status);
+						layer.msg('获取失败');
+					}
+				});
+				
+				
+				// 修改信息
+				$("#ok").click(function(){
+					var isNull = false;
+					for (var i = 0; i < $(".layui-input-block input[type=text]").length; i++) {
+						if ($(".layui-input-block input[type=text]").eq(i).val() == "") {
+							isNull = true;
+						}
+					}
+					if (isNull) {
+						layer.msg("请补全内容");
+					} else {
+						$.ajax({
+							url: "updateUser",
+							type: 'POST',
+							data: {
+								user_id: $("#id").val(),
+								user_password: $("#password").val(),
+								user_name: $("#name").val(),
+								user_sector: $("#sector option:selected").text(),
+								user_named: $("#named").val(),
+								user_time: $("#time").val(),
+								user_phone: $("#phone").val(),
+								user_sex: $("#sex input[type='radio']:checked").val(),
+							},
+							success: function(result) {
+								if(result > 0){
+									layer.msg('修改成功');
+								}else{
+									layer.msg('修改失败');
+								}
+							},
+							error: function(e) {
+								console.log(e.status);
+								layer.msg('修改失败');
+							}
+						});
+					}
+				});
+				
+			});
+			
+			function editInf(id){
+				$("#edit-all").fadeIn(300);
+				$("#edit-all").css("display","flex");
+				$.ajax({
+					url: "getAllSector",
+					type: 'POST',
+					data: {
+						
+					},
+					success: function(result) {
+						
+						var data = "";
+						for(var i = 0;i < result.length;i++){
+							data += '<option>'+result[i].sector_name+'</option>';
+						}
+						$("#sector").html(data);
+						form.render();
+						
+						$.ajax({
+							url: "getIdUser",
+							type: 'POST',
+							data: {
+								user_id: id,
+							},
+							success: function(result) {
+								for(var i = 0;i < result.length;i++){
+									$("#id").val(result[i].user_id);
+									$("#password").val(result[i].user_password);
+									$("#name").val(result[i].user_name);
+									$("#sector").find("option:contains('"+result[i].user_sector+"')").attr("selected",true);
+									$("#named").val(result[i].user_named);
+									$("#time").val(result[i].user_time);
+									$("#phone").val(result[i].user_phone);
+									$(":radio[name='sex'][value='" + result[i].user_sex + "']").attr("checked", true);
+								}
+								form.render();
+							},
+							error: function(e) {
+								console.log(e.status);
+								layer.msg('删除失败');
+							}
+						});
+						
+					},
+					error: function(e) {
+						console.log(e.status);
+						layer.msg('获取信息失败');
+					}
+				});
+			}
+			
+			function deleteInf(id){
+				if(window.confirm("确认删除？")){
+					$.ajax({
+						url: "deleteUser",
+						type: 'POST',
+						data: {
+							user_id: id,
+						},
+						success: function(result) {
+							if(result > 0){
+								layer.msg('删除成功');
+								window.location.reload();
+							}else{
+								layer.msg('删除失败');
+							}
+						},
+						error: function(e) {
+							console.log(e.status);
+							layer.msg('删除失败');
+						}
+					});
+				}else{
+					return false;
+				}
+			}
+		</script>
+	</body>
+</html>

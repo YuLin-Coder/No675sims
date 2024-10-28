@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>工资信息管理系统</title>
+		<link rel="stylesheet" type="text/css" href="js/layui/css/layui.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<script src="js/jquery-2.0.0.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<style type="text/css">
+		body {
+			background: url("img/background.png") no-repeat;
+			background-size: cover;
+			background-attachment: fixed;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+		}
+
+		.board {
+			width: 400px;
+			background-color: white;
+			box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+		}
+
+		.name {
+			color: rgba(0, 0, 0, 0.6);
+			margin-top: 30px;
+			letter-spacing: 2px;
+			text-align: center;
+		}
+
+		.layui-tab {
+			margin-top: 30px;
+		}
+
+		.layui-tab-title li {
+			font-size: 16px;
+		}
+
+		.layui-tab-content {
+			padding-top: 30px;
+			padding-bottom: 30px;
+		}
+
+		.layui-form-item {
+			display: flex;
+		}
+
+		.layui-form-label {
+			width: auto;
+		}
+
+		.layui-input-block {
+			flex: 1;
+			margin-left: 0px;
+			padding-right: 20px;
+		}
+
+		.layui-btn {
+			width: 80%;
+			margin: auto;
+			margin-top: 30px;
+			display: block;
+		}
+	</style>
+	<body>
+		<div class="board">
+			<h1 class="name">工资信息管理系统</h1>
+			<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+				<ul class="layui-tab-title" style="display: flex;">
+					<li class="layui-this" style="flex: 1;">员工登录</li>
+					<li style="flex: 1;">管理员登录</li>
+				</ul>
+				<div class="layui-tab-content">
+					<div class="layui-tab-item layui-show">
+						<div class="layui-form-item">
+							<label class="layui-form-label layui-icon">&#xe66f;</label>
+							<div class="layui-input-block">
+								<input id="username" type="text" name="username" autocomplete="off" placeholder="请输入用户名" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label layui-icon">&#xe673;</label>
+							<div class="layui-input-block">
+								<input id="userpassword" type="password" name="userpassword" autocomplete="off" placeholder="请输入密码" class="layui-input">
+							</div>
+						</div>
+						<button id="loginuser" type="button" class="layui-btn">登录</button>
+					</div>
+					<div class="layui-tab-item">
+						<div class="layui-form-item">
+							<label class="layui-form-label layui-icon">&#xe66f;</label>
+							<div class="layui-input-block">
+								<input id="adminname" type="text" name="adminname" autocomplete="off" placeholder="请输入管理员用户名" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label layui-icon">&#xe673;</label>
+							<div class="layui-input-block">
+								<input id="adminpassword" type="password" name="adminpassword" autocomplete="off" placeholder="请输入管理员密码" class="layui-input">
+							</div>
+						</div>
+						<button id="loginadmin" type="button" class="layui-btn">登录</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			layui.use(['layer', 'element'], function() {
+				// 员工登录
+				$("#loginuser").click(function() {
+					if ($("#username").val() == "" || $("#userpassword").val() == "") {
+						layer.msg('请输入完整');
+					} else {
+						$.ajax({
+							url: "loginUser",
+							type: 'POST',
+							data: {
+								user_id: $("#username").val(),
+								user_password: $("#userpassword").val(),
+							},
+							success: function(result) {
+								if(result == 0){
+									layer.msg('账号或密码错误');
+								}else{
+									layer.msg('登录成功');
+									window.open("index.html","_self");
+								}
+							},
+							error: function(e) {
+								console.log(e.status);
+								layer.msg('登录失败');
+							}
+						});
+					}
+				});
+				// 管理员登录
+				$("#loginadmin").click(function() {
+					if ($("#adminname").val() == "" || $("#adminpassword").val() == "") {
+						layer.msg('请输入完整');
+					} else {
+						$.ajax({
+							url: "loginAdmin",
+							type: 'POST',
+							data: {
+								admin_name: $("#adminname").val(),
+								admin_password: $("#adminpassword").val(),
+							},
+							success: function(result) {
+								if(result == 0){
+									layer.msg('账号或密码错误');
+								}else{
+									layer.msg('登录成功');
+									window.open("adminIndex.html","_self");
+								}
+							},
+							error: function(e) {
+								console.log(e.status);
+								layer.msg('登录失败');
+							}
+						});
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

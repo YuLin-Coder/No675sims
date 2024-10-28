@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.joker.mapper.UserMapper">
+	<select id="login" resultType="Integer">
+		select count(*) from user_ where
+		user_id = #{user_id} and user_password = #{user_password}
+	</select>
+	<insert id="addUser" parameterType="User">
+		insert into user_
+		(user_password,user_picture,user_name,user_sector,user_named,user_time,user_phone,user_sex)
+		values
+		(#{user_password},#{user_picture},#{user_name},#{user_sector},#{user_named},#{user_time},#{user_phone},#{user_sex})
+	</insert>
+	<delete id="deleteUser" parameterType="String">
+		delete from user_ where
+		user_id= #{user_id}
+	</delete>
+	<update id="updateUser" parameterType="User">
+		update user_ set
+		user_password=#{user_password},user_picture=#{user_picture},user_name=#{user_name},user_sector=#{user_sector},user_named=#{user_named},user_time=#{user_time},user_phone=#{user_phone},user_sex=#{user_sex}
+		where user_id=#{user_id}
+	</update>
+	<select id="getAllUser" resultType="User">
+		select * from user_ order by
+		user_id desc limit #{start},#{count}
+	</select>
+	<select id="getAllUserCount" resultType="Integer">
+		select count(*) from user_
+	</select>
+	<select id="getIdUser" resultType="User">
+		select * from user_ where user_id = #{user_id}
+	</select>
+	<select id="getSearchUser" resultType="User">
+		select * from user_ where user_id like concat('%',#{search},'%') or user_name like concat('%',#{search},'%')
+	</select>
+	<select id="getSearchUserCount" resultType="Integer">
+		select count(*) from user_ where user_id like concat('%',#{search},'%') or user_name like concat('%',#{search},'%')
+	</select>
+</mapper>

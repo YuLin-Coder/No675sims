@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.joker.mapper.SectorMapper">
+	<select id="getAllSector" resultType="Sector">
+		select * from sector_
+	</select>
+	<insert id="addSector" parameterType="String">
+		insert into sector_
+		(sector_name)
+		values
+		(#{sector_name})
+	</insert>
+	<delete id="deleteSector" parameterType="String">
+		delete from sector_ where
+		sector_name = #{sector_name}
+	</delete>
+</mapper>

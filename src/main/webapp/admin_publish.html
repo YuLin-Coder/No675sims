@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>工资信息管理系统</title>
+		<link rel="stylesheet" type="text/css" href="js/layui/css/layui.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<script src="js/jquery-2.0.0.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/isLoginAdmin.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<style type="text/css">
+		body {
+			padding: 50px 50px;
+		}
+
+		.content {
+			width: 400px;
+		}
+
+		.layui-btn {
+			width: 290px;
+			float: right;
+			margin-top: 10px;
+		}
+		
+		.search{
+			display: flex;
+			align-items: center;
+		}
+		
+		#search{
+			width: 200px;
+		}
+		#start-search{
+			margin: 0;
+			margin-left: 10px;
+			width: 70px;
+		}
+		
+		.header th {
+			font-size: 15px;
+			font-weight: bold;
+		}
+
+		#more {
+			text-align: center;
+			font-size: 12px;
+			background-color: white;
+			border-top: 1px solid #E6E6E6;
+		}
+
+		.control {
+			width: 100px;
+		}
+		.control font{
+			font-size: 12px;
+			cursor: pointer;
+			transition: 0.3s all;
+			color: #009688;
+			display: inline-block;
+			margin-left: 10px;
+		}
+		.control font:hover{
+			text-decoration: underline;
+			transform: scale(1.1);
+			transition: 0.3s all;
+		}
+		.wage{
+			color: coral !important;
+		}
+		
+		#notice{
+			width: 100vw;
+			height: 100vh;
+			background-color: rgba(0,0,0,0.2);
+			position: fixed;
+			top: 0;
+			left: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			display: none;
+		}
+		#notice-board{
+			width: 400px;
+			background-color: white;
+			padding: 20px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+		#notice-board input{
+			margin-bottom: 10px;
+		}
+		#notice-board-control{
+			display: flex;
+			width: 100%;
+		}
+		#notice-board-control button{
+			margin: 10px !important;
+		}
+		
+		#wage{
+			width: 100vw;
+			height: 100vh;
+			background-color: rgba(0,0,0,0.2);
+			position: fixed;
+			top: 0;
+			left: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			display: none;
+		}
+		#wage-board{
+			background-color: white;
+			width: 400px;
+			padding: 20px;
+		}
+		#wage-board input{
+			margin-top: 10px;
+		}
+		#wage-board-control{
+			display: flex;
+			width: 100%;
+			margin-top: 10px;
+		}
+		#wage-board-control button{
+			margin: 10px !important;
+		}
+	</style>
+	<body>
+		<div class="search">
+			<input id="search" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入要搜索的内容" class="layui-input">
+			<button id="start-search" type="button" class="layui-btn">搜索</button>
+		</div>
+		<table class="layui-table" style="margin-top: 30px;" lay-even="" lay-skin="row">
+			<colgroup>
+				<col width="150">
+				<col width="150">
+				<col width="200">
+				<col>
+			</colgroup>
+			<thead>
+				<tr class="header">
+					<th>员工编号</th>
+					<th>员工姓名</th>
+					<th>所属部门</th>
+					<th>员工职称</th>
+					<th>入职日期</th>
+					<th>手机号码</th>
+					<th>性别</th>
+					<th style="text-align: center;">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr id="more">
+					<td colspan="8">加载更多...</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<div id="notice">
+			<div id="notice-board">
+				<input id="notice-text" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入要发送的通知" class="layui-input">
+				<div id="notice-board-control">
+					<button id="send-notice" type="button" class="layui-btn">发送</button>
+					<button type="button" class="layui-btn" onclick="$('#notice').fadeOut(300)">取消</button>
+				</div>
+			</div>
+		</div>
+		
+		<div id="wage">
+			<div id="wage-board">
+				<input id="basic-wage" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入基本工资金额" class="layui-input">
+				<input id="bonus-wage" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入奖金金额" class="layui-input">
+				<div id="wage-board-control">
+					<button id="send-wage" type="button" class="layui-btn">发送</button>
+					<button type="button" class="layui-btn" onclick="$('#wage').fadeOut(300)">取消</button>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+			layui.use(['layer', 'element'], function() {
+
+				// 搜索
+				$("#start-search").click(function(){
+					if($("#search").val() == ""){
+						layer.msg("请输入搜素内容");
+					}else{
+						$.ajax({
+							url: "getSearchUser",
+							type: 'POST',
+							data: {
+								search: $("#search").val(),
+								start: 0,
+								count: 9999,
+							},
+							success: function(result) {
+								$(".l").remove();
+								var data = "";
+								for(var i = 0;i < result.length;i++){
+									data += '<tr class="l">'
+										+'<td>'+result[i].user_id+'</td>'
+										+'<td>'+result[i].user_password+'</td>'
+										+'<td>'+result[i].user_name+'</td>'
+										+'<td>'+result[i].user_sector+'</td>'
+										+'<td>'+result[i].user_named+'</td>'
+										+'<td>'+result[i].user_time+'</td>'
+										+'<td>'+result[i].user_phone+'</td>'
+										+'<td>'+result[i].user_sex+'</td>'
+										+'<td class="control">'
+											+'<i class="layui-icon edit" onclick="editInf(\''+result[i].user_id+'\')" title="编辑">&#xe63c;</i>'
+											+'<i class="layui-icon delete" onclick="deleteInf(\''+result[i].user_id+'\')" style="background-color: #EB7350;" title="删除">&#xe640;</i>'
+										+'</td>'
+									+'</tr>';
+								}
+								$("#more").before(data);
+							},
+							error: function(e) {
+								console.log(e.status);
+								layer.msg('搜索失败');
+							}
+						});
+					}
+				});
+				
+				$.ajax({
+					url: "getAllUser",
+					type: 'POST',
+					data: {
+						start: 0,
+						count: 9999,
+					},
+					success: function(result) {
+						var data = "";
+						for(var i = 0;i < result.length;i++){
+							data += '<tr class="l">'
+								+'<td>'+result[i].user_id+'</td>'
+								+'<td>'+result[i].user_name+'</td>'
+								+'<td>'+result[i].user_sector+'</td>'
+								+'<td>'+result[i].user_named+'</td>'
+								+'<td>'+result[i].user_time+'</td>'
+								+'<td>'+result[i].user_phone+'</td>'
+								+'<td>'+result[i].user_sex+'</td>'
+								+'<td class="control">'
+									+'<font class="notice" onclick="sendNotice(\''+result[i].user_id+'\')">发通知</font>'
+									+'<font class="wage" onclick="sendWage(\''+result[i].user_id+'\')">发工资</font>'
+								+'</td>'
+							+'</tr>';
+						}
+						$("#more").before(data);
+					},
+					error: function(e) {
+						console.log(e.status);
+						layer.msg('获取失败');
+					}
+				});
+				
+				// 发送通知
+				$("#send-notice").click(function(){
+					if($("#notice-text").val() == ""){
+						layer.msg("请先输入内容");
+					}else{
+						$.ajax({
+							url: "addNotice",
+							type: 'POST',
+							data: {
+								user_id: $("#send-notice").attr("userId"),
+								notice_content: $("#notice-text").val(),
+							},
+							success: function(result) {
+								if(result > 0){
+									layer.msg("发送成功");
+								}else{
+									layer.msg("发送失败");
+								}
+							},
+							error: function(e) {
+								console.log(e.status);
+								layer.msg('发送失败');
+							}
+						});
+					}
+				});
+				
+				// 发送工资
+				$("#send-wage").click(function(){
+					if($("#basic-wage").val() == "" || $("#bonus-wage").val() == ""){
+						layer.msg("请先输入内容");
+					}else{
+						$.ajax({
+							url: "addWage",
+							type: 'POST',
+							data: {
+								wage_userId: $("#send-wage").attr("userId"),
+								wage_basic: $("#basic-wage").val(),
+								wage_bonus: $("#bonus-wage").val(),
+							},
+							success: function(result) {
+								if(result > 0){
+									layer.msg("发送成功");
+									$.ajax({
+										url: "addNotice",
+										type: 'POST',
+										data: {
+											user_id: $("#send-wage").attr("userId"),
+											notice_content: "您的工资已发放，请注意查收！！！",
+										},
+										success: function(result) {
+											if(result > 0){
+												layer.msg("通知发送成功");
+											}else{
+												layer.msg("通知发送失败");
+											}
+										},
+										error: function(e) {
+											console.log(e.status);
+											layer.msg('通知发送失败');
+										}
+									});
+								}else{
+									layer.msg("发送失败");
+								}
+							},
+							error: function(e) {
+								console.log(e.status);
+								layer.msg('发送失败');
+							}
+						});
+					}
+				});
+				
+			});
+			
+
+			function sendNotice(id){
+				$("#notice").fadeIn(300);
+				$("#notice").css("display","flex");
+				$("#send-notice").attr("userId",id);
+			}
+			
+			function sendWage(id){
+				$("#wage").fadeIn(300);
+				$("#wage").css("display","flex");
+				$("#send-wage").attr("userId",id);
+			}
+			
+		</script>
+	</body>
+</html>

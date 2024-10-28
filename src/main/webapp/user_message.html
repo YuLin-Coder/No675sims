@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>工资信息管理系统</title>
+		<link rel="stylesheet" type="text/css" href="js/layui/css/layui.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<script src="js/jquery-2.0.0.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/isLoginUser.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<style type="text/css">
+		body {
+			padding: 50px 50px;
+		}
+		.message-list{
+			width: 100%;
+		}
+		.message-list li{
+			list-style: none;
+			font-size: 16px;
+			letter-spacing: 1px;
+			font-weight: 300;
+			padding: 20px 30px;
+		}
+		.message-list li font{
+			color: #009688;
+			font-weight: normal;
+		}
+		.message-list li:nth-of-type(odd){
+			background-color: rgba(0,0,0,0.05);
+		}
+		#more{
+			text-align: center;
+			font-size: 13px;
+			color: rgba(0,0,0,0.5);
+			background-color: white !important;
+		}
+	</style>
+	<body>
+		<ul class="message-list">
+			
+			<li id="more">—加载更多—</li>
+		</ul>
+		<script type="text/javascript">
+			layui.use(['layer', 'element'], function() {
+				// 设置已读消息
+				$.ajax({
+					url: "setAllRead",
+					type: 'POST',
+					data: {
+						
+					},
+					success: function(result) {
+						layer.msg('查看消息成功');
+						$("body",window.parent.document).find("#message").html("消息中心");
+					},
+					error: function(e) {
+						console.log(e.status);
+						layer.msg('查看消息失败');
+					}
+				});
+				
+				// 获取信息
+				$.ajax({
+					url: "getIdAllNotice",
+					type: 'POST',
+					data: {
+						start: 0,
+						count: 99999,
+					},
+					success: function(result) {
+
+						var data = "";
+						
+						for(var i = 0;i < result.length;i++){
+							data += '<li><font>['+result[i].notice_time+']—</font>'+result[i].notice_content+'</li>';
+						}
+						
+						$("#more").before(data);
+						
+					},
+					error: function(e) {
+						console.log(e.status);
+						layer.msg('查看消息失败');
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

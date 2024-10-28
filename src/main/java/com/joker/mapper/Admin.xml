@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.joker.mapper.AdminMapper">
+	<select id="loginAdmin" resultType="Integer">
+		select count(*) from admin_ where
+		admin_name = #{admin_name} and admin_password = #{admin_password}
+	</select>
+	<update id="updateAdminPassword" parameterType="String">
+		update admin_ set
+		admin_password=#{admin_password}
+		where admin_name=#{admin_name}
+	</update>
+</mapper>

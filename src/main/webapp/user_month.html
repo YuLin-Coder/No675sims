@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>工资信息管理系统</title>
+<link rel="stylesheet" type="text/css" href="js/layui/css/layui.css" />
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<script src="js/jquery-2.0.0.min.js" type="text/javascript"
+	charset="utf-8"></script>
+<script src="js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/isLoginUser.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<style type="text/css">
+body {
+	padding: 0px 50px;
+	display: flex;
+}
+
+.left {
+	flex: 1;
+	height: calc(100vh - 70px);
+	overflow-y: auto;
+	padding-top: 20px;
+	padding-bottom: 50px;
+}
+
+.right {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 50px 30px;
+}
+</style>
+<body>
+	<div class="left">
+		<fieldset class="layui-elem-field layui-field-title"
+			style="margin-top: 10px;">
+			<legend>月度工资</legend>
+		</fieldset>
+		<div id="content"></div>
+	</div>
+	<div class="right"></div>
+	<script type="text/javascript">
+		$(function() {
+			// 基于准备好的dom，初始化echarts实例
+			var myChart = echarts
+					.init(document.getElementsByClassName('right')[0]);
+			// 指定图表的配置项和数据
+			var option = {
+				title : {
+					text : '月度工资',
+					subtext : "实发工资"
+				},
+				tooltip : {},
+				legend : {
+					data : [ '实发工资', '实发工资-线条' ]
+				},
+				xAxis : {
+					data : []
+				},
+				yAxis : {
+
+				},
+				series : [ {
+					name : '实发工资',
+					type : 'bar',
+					data : [],
+					itemStyle : {
+						normal : {
+							color : '#009688'
+						},
+					}
+				}, {
+					name : '实发工资-线条',
+					type : 'line',
+					smooth : false,
+					data : [],
+					itemStyle : {
+						normal : {
+							color : '#5F6368'
+						},
+					}
+				}, ],
+				dataZoom : {
+					realtime : true, //拖动滚动条时是否动态的更新图表数据
+					height : 25, //滚动条高度
+					start : 10, //滚动条开始位置（共100等份）
+					end : 100
+				//结束位置（共100等份）
+				}
+			};
+
+			// 使用刚指定的配置项和数据显示图表。
+			myChart.setOption(option);
+
+			//根据窗口的大小变动图表 --- 若有多个图表，可以写多个
+			window.onresize = function() {
+				myChart.resize();
+			}
+
+			$.ajax({
+				url : "getIdWageNow",
+				type : "post",
+				data : {
+
+				},
+				success : function(result) {
+
+					var year = "";
+					var data = "";
+
+					for (var i = 0; i < result.length; i++) {
+
+						
+
+						if (result[i].wage_time.split("-")[0] != year) {
+							year = result[i].wage_time.split("-")[0];
+							data += '<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">'
+									+ '<legend>'
+									+ year
+									+ '年</legend>'
+									+ '</fieldset>'
+									+ '<ul class="layui-timeline">'
+									+ '<li class="layui-timeline-item">'
+									+ '<i class="layui-icon layui-timeline-axis"></i>'
+									+ '<div class="layui-timeline-content layui-text">'
+									+ '<h3 class="layui-timeline-title">'
+									+ result[i].wage_time.split("-")[1]
+									+ '-'
+									+ result[i].wage_time.split("-")[2]
+											.split(" ")[0]
+									+ '</h3>'
+									+ '<p>实发工资：基本工资'
+									+ result[i].wage_basic
+									+ '+奖金'
+									+ result[i].wage_bonus
+									+ '元</p>'
+									+ '</div>' + '</li>';
+						} else {
+							data += '<li class="layui-timeline-item">'
+									+ '<i class="layui-icon layui-timeline-axis"></i>'
+									+ '<div class="layui-timeline-content layui-text">'
+									+ '<h3 class="layui-timeline-title">'
+									+ result[i].wage_time.split("-")[1]
+									+ '-'
+									+ result[i].wage_time.split("-")[2]
+											.split(" ")[0] + '</h3>'
+									+ '<p>实发工资：基本工资'
+									+ result[i].wage_basic + '+奖金'
+									+ result[i].wage_bonus + '元</p>'
+									+ '</div>' + '</li>';
+						}
+					}
+
+					data += '</ul>';
+
+					$("#content").after(data);
+					
+					var datax = [];
+					var datay = [];
+					
+					for (var i = 0; i < result.length; i++) {
+						datax.push(result[i].wage_time.split(" ")[0]);
+						datay.push((parseInt(result[i].wage_basic) + parseInt(result[i].wage_bonus)));
+					}
+					
+					myChart.setOption({
+						xAxis : {
+							data : datax
+						},
+						series : [
+								{
+									name : '实发工资',
+									type : 'bar',
+									data : datay,
+									itemStyle : {
+										normal : {
+											color : '#009688'
+										},
+									}
+								},
+								{
+									name : '实发工资-线条',
+									type : 'line',
+									smooth : false,
+									data : datay,
+									itemStyle : {
+										normal : {
+											color : '#5F6368'
+										},
+									}
+								}, ]
+					});
+					
+					
+				},
+				error : function(e) {
+					console.log(e.status);
+				}
+			});
+
+		});
+	</script>
+</body>
+</html>

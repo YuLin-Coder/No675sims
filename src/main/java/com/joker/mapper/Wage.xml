@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.joker.mapper.WageMapper">
+	<select id="getIdWage" resultType="Wage">
+		select * from wage_
+	</select>
+	<insert id="addWage" parameterType="Wage">
+		insert into wage_
+		(wage_userId,wage_time,wage_basic,wage_bonus)
+		values
+		(#{wage_userId},#{wage_time},#{wage_basic},#{wage_bonus})
+	</insert>
+</mapper>

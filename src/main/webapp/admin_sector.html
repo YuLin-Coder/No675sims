@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>工资信息管理系统</title>
+		<link rel="stylesheet" type="text/css" href="js/layui/css/layui.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<script src="js/jquery-2.0.0.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/isLoginAdmin.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<style type="text/css">
+		body {
+			padding: 50px 50px;
+		}
+		.content{
+			width: 100%;
+			display: flex;
+			flex-wrap: wrap;
+		}
+		.board{
+			padding: 10px 20px;
+			margin: 10px;
+			box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.board font{
+			font-size: 16px;
+			letter-spacing: 2px;
+			font-weight: 300;
+		}
+		.delete{
+			font-size: 14px;
+			background-color: darksalmon;
+			color: white;
+			border-radius: 50%;
+			padding: 3px;
+			cursor: pointer;
+			transition: 0.2s all;
+			margin-left: 10px;
+		}		
+		.delete:hover{
+			transform: rotateZ(360deg);
+			background-color: red;
+			transition: 0.5s all;
+		}
+		.add{
+			display: flex;
+			margin: 10px;
+			justify-content: center;
+			align-items: center;
+			box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+			padding: 0px 10px;
+		}
+		.add input{
+			border: none;
+		}
+		#add{
+			margin-left: 10px;
+			cursor: pointer;
+		}
+		#add:hover{
+			color: #009688;
+			font-size: 20px;
+			font-weight: bold;
+			transition: 0.5s all;
+		}
+	</style>
+	<body>
+		<div class="content">
+			
+			<div class="add"><input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input"><i class="layui-icon" id="add">&#xe624;</i></div>
+		</div>
+		<script type="text/javascript">
+			layui.use(['layer', 'element'], function() {
+				
+				$.ajax({
+					url: "getAllSector",
+					type: 'POST',
+					data: {
+						
+					},
+					success: function(result) {
+						var data = "";
+						for(var i = 0;i < result.length;i++){
+							data += '<div class="board"><font>'+result[i].sector_name+'</font><i class="layui-icon delete" onclick="deleteSector(\''+result[i].sector_name+'\')">&#xe640;</i></div>';
+						}
+						$(".add").eq(0).before(data);
+					},
+					error: function(e) {
+						console.log(e.status);
+						layer.msg('获取失败');
+					}
+				});
+					
+				// 添加部门
+				$("#add").click(function(){
+					if($(".add input").eq(0).val() == ""){
+						layer.msg("请输入要添加的部门");
+					}else{
+						$.ajax({
+							url: "addSector",
+							type: 'POST',
+							data: {
+								sector_name: $(".add input").eq(0).val(),
+							},
+							success: function(result) {
+								if(result > 0){
+									layer.msg('添加成功');
+									window.location.reload();
+								}else{
+									layer.msg('添加失败');
+								}
+							},
+							error: function(e) {
+								console.log(e.status);
+								layer.msg('添加失败');
+							}
+						});
+					}
+				});
+				
+					
+			});
+			
+			function deleteSector(name){
+				if(window.confirm('你确定要删除'+name+"吗？")){
+					$.ajax({
+						url: "deleteSector",
+						type: 'POST',
+						data: {
+							sector_name: name,
+						},
+						success: function(result) {
+							if(result > 0){
+								layer.msg('删除成功');
+								window.location.reload();
+							}else{
+								layer.msg('删除失败');
+							}
+						},
+						error: function(e) {
+							console.log(e.status);
+							layer.msg('删除失败');
+						}
+					});
+				}else{
+					return false;
+				}
+			}
+		</script>
+	</body>
+</html>

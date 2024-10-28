@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.joker.mapper.NoticeMapper">
+	<insert id="addNotice" parameterType="String">
+		insert into notice_
+		(notice_userId,notice_content,notice_time)
+		values
+		(#{user_id},#{notice_content},#{notice_time})
+	</insert>
+	<update id="setAllRead" parameterType="String">
+		update notice_ set
+		notice_isRead='true'
+		where notice_userId = #{user_id}
+	</update>
+	<select id="getIdAllNotice" resultType="Notice">
+		select * from notice_ where notice_userId = #{user_id} order by notice_id desc limit #{start},#{count}
+	</select>
+	<select id="getIdAllNoticeCount" resultType="Integer">
+		select count(*) from notice_ where notice_userId = #{user_id}
+	</select>
+	<select id="noReadNoticeCount" resultType="Integer">
+		select count(*) from notice_ where notice_userId = #{user_id} and notice_isRead = 'false'
+	</select>
+</mapper>

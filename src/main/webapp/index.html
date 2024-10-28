@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>工资信息管理系统</title>
+		<link rel="stylesheet" type="text/css" href="js/layui/css/layui.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<script src="js/jquery-2.0.0.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/isLoginUser.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<style type="text/css">
+		.layui-nav-tree .layui-this a{
+			background-color: #4E5465 !important;
+		}
+	</style>
+	<body>
+
+		<div class="layui-layout layui-layout-admin">
+			<div class="layui-header layui-bg-cyan">
+				<div class="layui-logo" style="font-size: 26px;color: white;">员工</div>
+				<!-- 头部区域（可配合layui已有的水平导航） -->
+				<ul class="layui-nav layui-layout-left">
+					<li class="layui-nav-item layui-this"><a href="user_month.html" target="content">首页</a></li>
+					<li class="layui-nav-item"><a id="message" href="user_message.html" target="content">消息中心<span class="layui-badge-dot"></span></a></li>
+				</ul>
+				<ul class="layui-nav layui-layout-right">
+					<li class="layui-nav-item">
+						<a id="inf_name" href="javascript:;">
+							
+						</a>
+					</li>
+					<li class="layui-nav-item" id="quitLogin"><a href="">退了</a></li>
+				</ul>
+			</div>
+
+			<div class="layui-side layui-bg-cyan">
+				<div class="layui-side-scroll">
+					<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+					<ul class="layui-nav layui-nav-tree layui-bg-cyan" lay-filter="test">
+						<li class="layui-nav-item layui-this"><a href="user_month.html" target="content">月度工资</a></li>
+						<li class="layui-nav-item"><a href="user_year.html" target="content">年度工资</a></li>
+						<li class="layui-nav-item"><a href="user_inf.html" target="content">修改信息</a></li>
+						<li class="layui-nav-item"><a href="user_changepassword.html" target="content">修改登录密码</a></li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="layui-body" style="display: flex;">
+				<!-- 内容主体区域 -->
+				<iframe src="user_month.html" frameborder="0" name="content" style="flex: 1;"></iframe>
+			</div>
+
+			<div class="layui-footer">
+				<!-- 底部固定区域 -->
+				© 个人所有
+			</div>
+		</div>
+		<script>
+			//JavaScript代码区域
+			layui.use(['layer','element'], function() {
+				var element = layui.element;
+				
+				// 点击左侧菜单栏后顶部导航栏切换到默认选项
+				$(".layui-nav-tree .layui-nav-item").click(function(){
+					for(var i = 0;i < $(".layui-layout-left .layui-nav-item").length;i++){
+						$(".layui-layout-left .layui-nav-item").eq(i).removeClass("layui-this");
+					}
+					$(".layui-layout-left .layui-nav-item").eq(0).addClass("layui-this");
+				});
+				
+				// 获取有没有未读消息,有就显示红点
+				$.ajax({
+					url: "noReadNoticeCount",
+					type: 'POST',
+					data: {
+						
+					},
+					success: function(result) {
+						if(result > 0){
+							layer.msg('您有新消息未查看');
+							$("#message").html('消息中心<span class="layui-badge-dot"></span>');
+						}else{
+							$("#message").html("消息中心");
+						}
+					},
+					error: function(e) {
+						console.log(e.status);
+						layer.msg('消息信息获取失败');
+					}
+				});
+				
+				$("#quitLogin").click(function(){
+					$.ajax({
+						url: "quitLoginUser",
+						type: 'POST',
+						data: {
+							
+						},
+						success: function(result) {
+							layer.msg('退出成功');
+							window.open("login.html","_self");
+						},
+						error: function(e) {
+							console.log(e.status);
+							layer.msg('退出失败');
+						}
+					});
+				});
+				
+				
+				// 获取信息
+				$.ajax({
+					url: "getIdUserNow",
+					type: 'POST',
+					data: {
+						
+					},
+					success: function(result) {
+						
+						for(var i = 0;i < result.length;i++){
+							// $("#inf_name").html('<img src="'+result[0].user_picture+'" class="layui-nav-img">'+result[i].user_name);
+							$("#inf_name").html(result[i].user_name);
+						}
+						
+					},
+					error: function(e) {
+						console.log(e.status);
+						layer.msg('获取失败');
+					}
+				});
+				
+				
+			});
+		</script>
+
+	</body>
+</html>
